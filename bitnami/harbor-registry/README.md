@@ -8,13 +8,11 @@
 
 ## TL;DR
 
-```console
-curl -LO https://raw.githubusercontent.com/bitnami/containers/main/bitnami/harbor-portal/docker-compose.yml
-curl -L https://github.com/bitnami/containers/archive/main.tar.gz | tar xz --strip=2 containers-main/bitnami/harbor-portal && cp -RL harbor-portal/config . && rm -rf harbor-portal
-docker-compose up
-```
+This container is part of the [Harbor solution](https://github.com/bitnami/charts/tree/main/bitnami/harbor) that is primarily intended to be deployed in Kubernetes.
 
-> Please note you are downloading the docker-compose.yml file from the Harbor Portal component repository.
+```console
+docker run --name harbor-registry bitnami/harbor-registry:latest
+```
 
 ## Why use Bitnami Images?
 
@@ -51,6 +49,32 @@ Harbor Registry is a component of the Harbor application. In order to get the Ha
 
 For further information about the specific component itself, please refer to the [source repository documentation](https://github.com/goharbor/harbor/tree/main/docs).
 
+### Environment variables
+
+#### Customizable environment variables
+
+#### Read-only environment variables
+
+| Name                             | Description                                                                | Value                                             |
+|----------------------------------|----------------------------------------------------------------------------|---------------------------------------------------|
+| `HARBOR_REGISTRY_BASE_DIR`       | harbor-registry installation directory.                                    | `${BITNAMI_ROOT_DIR}/harbor-registry`             |
+| `HARBOR_REGISTRY_VOLUME_DIR`     | harbor-registry volume directory.                                          | `${BITNAMI_VOLUME_DIR}/harbor-registry`           |
+| `HARBOR_REGISTRY_STORAGE_DIR`    | harbor-registry storage directory.                                         | `${HARBOR_REGISTRY_VOLUME_DIR}/storage`           |
+| `HARBOR_REGISTRY_STORAGE_DIR`    | harbor-registry storage directory.                                         | `/storage`                                        |
+| `HARBOR_REGISTRY_LOGS_DIR`       | harbor-registry logs directory.                                            | `${HARBOR_REGISTRY_BASE_DIR}/logs`                |
+| `HARBOR_REGISTRY_TMP_DIR`        | harbor-registry directory for temporary files.                             | `${HARBOR_REGISTRY_BASE_DIR}/tmp`                 |
+| `HARBOR_REGISTRY_DAEMON_USER`    | harbor-registry system user.                                               | `harbor`                                          |
+| `HARBOR_REGISTRY_DAEMON_GROUP`   | harbor-registry system group.                                              | `harbor`                                          |
+| `HARBOR_REGISTRY_PID_FILE`       | PID file for harbor-registry service.                                      | `${HARBOR_REGISTRY_TMP_DIR}/harbor-registry.pid`  |
+| `HARBOR_REGISTRY_LOG_FILE`       | Log file for harbor-registry service.                                      | `${HARBOR_REGISTRY_LOGS_DIR}/harbor-registry.log` |
+| `HARBOR_REGISTRY_EXTRA_ENV_FILE` | File to store extra environment variables for the harbor-registry service. | `${HARBOR_REGISTRY_BASE_DIR}/.env`                |
+
+## Notable Changes
+
+### Starting January 16, 2024
+
+* The `docker-compose.yaml` file has been removed, as it was solely intended for internal testing purposes.
+
 ## Contributing
 
 We'd love for you to contribute to this container. You can request new features by creating an [issue](https://github.com/bitnami/containers/issues) or submitting a [pull request](https://github.com/bitnami/containers/pulls) with your contribution.
@@ -61,7 +85,7 @@ If you encountered a problem running this container, you can file an [issue](htt
 
 ## License
 
-Copyright &copy; 2023 VMware, Inc.
+Copyright &copy; 2024 Broadcom. The term "Broadcom" refers to Broadcom Inc. and/or its subsidiaries.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

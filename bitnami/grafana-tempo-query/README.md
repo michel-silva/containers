@@ -74,19 +74,13 @@ In order for the container to work, you need to mount your custom `tempo-query.y
 docker run --rm --name grafana-tempo-query -v /path/to/tempo-query.yaml:/bitnami/grafana-tempo-query/conf/tempo-query.yaml bitnami/grafana-tempo-query:latest
 ```
 
-Using docker-compose:
-
-```yaml
-version: '2'
-services:
-
-  grafana-tempo-query:
-    image: grafana-tempo-query
-    volumes:
-      - /path/to/tempo-query.yaml:/bitnami/grafana-tempo-query/conf/tempo-query.yaml
-```
-
 Check the [official Grafana Tempo Query documentation](https://grafana.com/docs/tempo/latest/configuration/) and the [Jaeger Query documentation](https://www.jaegertracing.io/docs/1.23/deployment/#query-service--ui) to understand the possible configurations.
+
+## Notable Changes
+
+### Starting January 16, 2024
+
+* The `docker-compose.yaml` file has been removed, as it was solely intended for internal testing purposes.
 
 ## Contributing
 
@@ -98,7 +92,7 @@ If you encountered a problem running this container, you can file an [issue](htt
 
 ## License
 
-Copyright &copy; 2023 VMware, Inc.
+Copyright &copy; 2024 Broadcom. The term "Broadcom" refers to Broadcom Inc. and/or its subsidiaries.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

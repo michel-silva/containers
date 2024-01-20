@@ -10,7 +10,7 @@ Trademarks: This software listing is packaged by Bitnami. The respective tradema
 ## TL;DR
 
 ```console
-docker run --name Kube RBAC Proxy bitnami/kube-rbac-proxy:latest
+docker run --name kube-rbac-proxy bitnami/kube-rbac-proxy:latest
 ```
 
 ## Why use Bitnami Images?
@@ -70,6 +70,12 @@ docker run --rm --name kube-rbac-proxy bitnami/kube-rbac-proxy:latest --  --upst
 
 Check the [official Kube RBAC Proxy documentation](https://github.com/brancz/kube-rbac-proxy) for more information.
 
+## Notable Changes
+
+### Starting January 16, 2024
+
+* The `docker-compose.yaml` file has been removed, as it was solely intended for internal testing purposes.
+
 ## Contributing
 
 We'd love for you to contribute to this container. You can request new features by creating an [issue](https://github.com/bitnami/containers/issues) or submitting a [pull request](https://github.com/bitnami/containers/pulls) with your contribution.
@@ -80,7 +86,7 @@ If you encountered a problem running this container, you can file an [issue](htt
 
 ## License
 
-Copyright &copy; 2023 VMware, Inc.
+Copyright &copy; 2024 Broadcom. The term "Broadcom" refers to Broadcom Inc. and/or its subsidiaries.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
