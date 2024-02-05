@@ -189,6 +189,9 @@ EOF
 #########################
 mysql_exec_initial_dump() {
     info "MySQL dump master data start..."
+
+    info "LOCK MASTER DATABASES FOR WRITE OPERATIONS..."
+    mysql -h "$DB_MASTER_HOST" -P "$DB_MASTER_PORT_NUMBER" -u "$DB_MASTER_ROOT_USER" -p"$DB_MASTER_ROOT_PASSWORD" -se 'FLUSH TABLES WITH READ LOCK;'
     
     info "SHOW MASTER STATUS..."
     read -r MYSQL_FILE MYSQL_POSITION <<< $(mysql -h "$DB_MASTER_HOST" -P "$DB_MASTER_PORT_NUMBER" -u "$DB_MASTER_ROOT_USER" -p"$DB_MASTER_ROOT_PASSWORD" -se 'SHOW MASTER STATUS;' | awk 'NR==1 {print $1, $2}')
@@ -219,6 +222,9 @@ EOF
 
     info "Remove dump file"
     rm -f $FILE_LOCATION
+
+    info "UNLOCK MASTER DATABASES FOR WRITE OPERATIONS..."
+    mysql -h "$DB_MASTER_HOST" -P "$DB_MASTER_PORT_NUMBER" -u "$DB_MASTER_ROOT_USER" -p"$DB_MASTER_ROOT_PASSWORD" -se 'UNLOCK TABLES;'
 
     info "Finish dump process databases"
 
