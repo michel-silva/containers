@@ -189,35 +189,39 @@ EOF
 #########################
 mysql_exec_initial_dump() {
     info "MySQL dump master data start..."
-    mysql -h "$DB_MASTER_HOST" -P "$DB_MASTER_PORT_NUMBER" -u "$DB_MASTER_ROOT_USER" -p"$DB_MASTER_ROOT_PASSWORD" -e 'RESET MASTER;'
+    
+    info "SHOW MASTER STATUS..."
+    read -r MYSQL_FILE MYSQL_POSITION <<< $(mysql -h "$DB_MASTER_HOST" -P "$DB_MASTER_PORT_NUMBER" -u "$DB_MASTER_ROOT_USER" -p"$DB_MASTER_ROOT_PASSWORD" -se 'SHOW MASTER STATUS;' | awk 'NR==1 {print $1, $2}')
+    info "File: $MYSQL_FILE and Position: $MYSQL_POSITION"
 
-    databases=("mysql")
-    if [ -n "$DB_DATABASE" ]; then
-        databases+=("$DB_DATABASE")
-    fi
-    for DB in "${databases[@]}"; do
-        info "Start dump process database $DB"
-        if [[ $DB = @(information_schema|performance_schema|sys) ]]; then
-            info "Skipping default table $DB to be imported"
-            continue
-        fi
-        DUMP_FILE="$DB_DATA_DIR/dump_$DB.sql"
-        if mysqldump --verbose -h "$DB_MASTER_HOST" -P "$DB_MASTER_PORT_NUMBER" -u "$DB_MASTER_ROOT_USER" -p"$DB_MASTER_ROOT_PASSWORD" "$DB" > "$DUMP_FILE"; then        
-            info "Finish dump database $DB"
-            info "Ensure database exists $DB"
-            mysql -u "$DB_MASTER_ROOT_USER" <<EOF
-create database if not exists $DB;
+    info "Start dump process databases"
+
+    FILE_LOCATION="$DB_DATA_DIR/dump_all_databases.sql"
+
+    mysqldump --verbose --all-databases -h "$DB_MASTER_HOST" -P "$DB_MASTER_PORT_NUMBER" -u "$DB_MASTER_ROOT_USER" -p"$DB_MASTER_ROOT_PASSWORD" > $FILE_LOCATION
+
+    info "Finish dump databases"
+
+    info "Start import dump databases"
+    mysql_execute < $FILE_LOCATION
+    info "Finish import dump databases"
+
+    mysql_execute "mysql" <<EOF
+CHANGE MASTER TO MASTER_HOST='$DB_MASTER_HOST',
+MASTER_PORT=$DB_MASTER_PORT_NUMBER,
+MASTER_USER='$DB_REPLICATION_USER',
+MASTER_PASSWORD='$DB_REPLICATION_PASSWORD',
+MASTER_DELAY=$DB_MASTER_DELAY,
+MASTER_LOG_FILE='$MYSQL_FILE', 
+MASTER_LOG_POS=$MYSQL_POSITION,
+MASTER_CONNECT_RETRY=10;
 EOF
-            info "Start import dump database $DB"
-            mysql_execute "$DB" < "$DUMP_FILE"
-            info "Finish import dump database $DB"
-        else
-            info "Error creating dump"
-        fi
-        info "Remove dump file"
-        rm -f "$DUMP_FILE"
-        info "Finish dump process database $DB"
-    done
+
+    info "Remove dump file"
+    rm -f $FILE_LOCATION
+
+    info "Finish dump process databases"
+
     info "MySQL dump master data finish..."
 }
 
@@ -240,11 +244,11 @@ mysql_configure_replication() {
 
         if [[ "$DB_REPLICATION_SLAVE_DUMP" = "true" ]]; then
             mysql_exec_initial_dump
-        fi
-
-        debug "Replication master ready!"
-        debug "Setting the master configuration"
-        mysql_execute "mysql" <<EOF
+        else
+        
+            debug "Replication master ready!"
+            debug "Setting the master configuration"
+            mysql_execute "mysql" <<EOF
 CHANGE MASTER TO MASTER_HOST='$DB_MASTER_HOST',
 MASTER_PORT=$DB_MASTER_PORT_NUMBER,
 MASTER_USER='$DB_REPLICATION_USER',
@@ -252,6 +256,8 @@ MASTER_PASSWORD='$DB_REPLICATION_PASSWORD',
 MASTER_DELAY=$DB_MASTER_DELAY,
 MASTER_CONNECT_RETRY=10;
 EOF
+        fi
+        
     elif [[ "$DB_REPLICATION_MODE" = "master" ]]; then
         info "Configuring replication in master node"
         if [[ -n "$DB_REPLICATION_USER" ]]; then
