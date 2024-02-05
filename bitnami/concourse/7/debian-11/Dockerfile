@@ -7,13 +7,13 @@ ARG TARGETARCH
 
 LABEL com.vmware.cp.artifact.flavor="sha256:1e1b4657a77f0d47e9220f0c37b9bf7802581b93214fff7d1bd2364c8bf22e8e" \
       org.opencontainers.image.base.name="docker.io/bitnami/minideb:bullseye" \
-      org.opencontainers.image.created="2023-12-15T18:31:04Z" \
+      org.opencontainers.image.created="2024-02-02T14:03:46Z" \
       org.opencontainers.image.description="Application packaged by VMware, Inc" \
       org.opencontainers.image.licenses="Apache-2.0" \
-      org.opencontainers.image.ref.name="7.11.0-debian-11-r7" \
+      org.opencontainers.image.ref.name="7.11.1-debian-11-r4" \
       org.opencontainers.image.title="concourse" \
       org.opencontainers.image.vendor="VMware, Inc." \
-      org.opencontainers.image.version="7.11.0"
+      org.opencontainers.image.version="7.11.1"
 
 ENV OS_ARCH="${TARGETARCH:-amd64}" \
     OS_FLAVOUR="debian-11" \
@@ -25,7 +25,7 @@ SHELL ["/bin/bash", "-o", "errexit", "-o", "nounset", "-o", "pipefail", "-c"]
 RUN install_packages ca-certificates curl iproute2 iptables libseccomp2 procps
 RUN mkdir -p /tmp/bitnami/pkg/cache/ ; cd /tmp/bitnami/pkg/cache/ ; \
     COMPONENTS=( \
-      "concourse-7.11.0-6-linux-${OS_ARCH}-debian-11" \
+      "concourse-7.11.1-3-linux-${OS_ARCH}-debian-11" \
     ) ; \
     for COMPONENT in "${COMPONENTS[@]}"; do \
       if [ ! -f "${COMPONENT}.tar.gz" ]; then \
@@ -38,11 +38,12 @@ RUN mkdir -p /tmp/bitnami/pkg/cache/ ; cd /tmp/bitnami/pkg/cache/ ; \
     done
 RUN apt-get update && apt-get upgrade -y && \
     apt-get clean && rm -rf /var/lib/apt/lists /var/cache/apt/archives
+RUN find / -perm /6000 -type f -exec chmod a-s {} \; || true
 RUN touch /.flyrc && chmod g+rwX /.flyrc
 RUN update-alternatives --set iptables /usr/sbin/iptables-legacy && \
     update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
 
-ENV APP_VERSION="7.11.0" \
+ENV APP_VERSION="7.11.1" \
     BITNAMI_APP_NAME="concourse" \
     PATH="/opt/bitnami/concourse/bin:$PATH"
 

@@ -74,19 +74,13 @@ In order for the container to work, you need to mount your custom `loki.yaml` fi
 docker run --rm --name grafana-loki -v /path/to/loki.yaml:/bitnami/grafana-loki/conf/loki.yaml bitnami/grafana-loki:latest
 ```
 
-Using docker-compose:
-
-```yaml
-version: '2'
-services:
-
-  grafana-loki:
-    image: grafana-loki
-    volumes:
-      - /path/to/loki.yaml:/bitnami/grafana-loki/conf/loki.yaml
-```
-
 Check the [official Grafana Loki documentation](https://grafana.com/docs/loki/latest/configuration/) to understand the possible configurations.
+
+## Notable Changes
+
+### Starting January 16, 2024
+
+* The `docker-compose.yaml` file has been removed, as it was solely intended for internal testing purposes.
 
 ## Contributing
 
@@ -98,7 +92,7 @@ If you encountered a problem running this container, you can file an [issue](htt
 
 ## License
 
-Copyright &copy; 2023 VMware, Inc.
+Copyright &copy; 2024 Broadcom. The term "Broadcom" refers to Broadcom Inc. and/or its subsidiaries.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
