@@ -422,7 +422,7 @@ The above command scales up the number of slaves to `3`. You can scale down in t
 
 > **Note**: You should not scale up/down the number of master nodes. Always have only one master node running.
 
-If your master database is missing some binary files, the replication will break. It's possible to add `MYSQL_REPLICATION_SLAVE_DUMP=true` to make a dump on the master and import it on the slave.
+If your master database missing some binary files, the replication will broken. It's possible add `MYSQL_REPLICATION_SLAVE_DUMP=true` toe make a dump on master and import it on slave.
 
 > **Note**: The master database must be only used by this process until the end to avoid missing data.
 
