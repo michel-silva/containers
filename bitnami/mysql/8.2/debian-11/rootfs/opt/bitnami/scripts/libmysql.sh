@@ -205,6 +205,9 @@ mysql_exec_initial_dump() {
 
     info "Finish dump databases"
 
+    info "UNLOCK MASTER DATABASES FOR WRITE OPERATIONS..."
+    mysql -h "$DB_MASTER_HOST" -P "$DB_MASTER_PORT_NUMBER" -u "$DB_MASTER_ROOT_USER" -p"$DB_MASTER_ROOT_PASSWORD" -se 'UNLOCK TABLES;'
+
     info "Start import dump databases"
     mysql_execute < $FILE_LOCATION
     info "Finish import dump databases"
@@ -222,9 +225,6 @@ EOF
 
     info "Remove dump file"
     rm -f $FILE_LOCATION
-
-    info "UNLOCK MASTER DATABASES FOR WRITE OPERATIONS..."
-    mysql -h "$DB_MASTER_HOST" -P "$DB_MASTER_PORT_NUMBER" -u "$DB_MASTER_ROOT_USER" -p"$DB_MASTER_ROOT_PASSWORD" -se 'UNLOCK TABLES;'
 
     info "Finish dump process databases"
 
